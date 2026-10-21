@@ -319,16 +319,8 @@ function fillTimesheet(xml, data, DOMParserImpl, XMLSerializerImpl) {
     kids(tbl, "tblPr").concat(kids(tbl, "tblGrid")).forEach(n => relief.appendChild(n.cloneNode(true)));
     let n = totalRow.nextSibling;
     while (n) { const next = n.nextSibling; if (n.nodeType === 1 && n.localName === "tr") relief.appendChild(n); n = next; }
-    // keep the relief table together on one page (each row "keeps with next")
+    // rows never split in half, but the table itself flows on from page 1 to page 2
     const rrows = kids(relief, "tr");
-    rrows.slice(0, -1).forEach(tr => {
-      const ps = tr.getElementsByTagNameNS(W_NS, "p");
-      for (let i = 0; i < ps.length; i++) {
-        let pPr = kids(ps[i], "pPr")[0];
-        if (!pPr) { pPr = doc.createElementNS(W_NS, "w:pPr"); ps[i].insertBefore(pPr, ps[i].firstChild); }
-        if (!kids(pPr, "keepNext").length) pPr.insertBefore(doc.createElementNS(W_NS, "w:keepNext"), pPr.firstChild);
-      }
-    });
     rrows.forEach(tr => {
       let trPr = kids(tr, "trPr")[0];
       if (!trPr) { trPr = doc.createElementNS(W_NS, "w:trPr"); tr.insertBefore(trPr, kids(tr, "tc")[0]); }
